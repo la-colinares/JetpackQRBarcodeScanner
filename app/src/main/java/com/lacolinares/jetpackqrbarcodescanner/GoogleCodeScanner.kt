@@ -27,13 +27,15 @@ class GoogleCodeScanner(
     fun startScan() {
         scanner.startScan()
             .addOnSuccessListener { barcode ->
+                barcode.rawValue
                 when(barcode.valueType){
                     Barcode.TYPE_WIFI -> {
                         val encryptionType = barcode.wifi?.encryptionType
                         val wifi = BarcodeTypeModel.Wifi(
                             networkName = barcode.wifi?.ssid.orEmpty(),
                             password =  barcode.wifi?.password.orEmpty(),
-                            type = getAuthType(encryptionType)
+                            type = getAuthType(encryptionType),
+                            rawString = barcode.rawValue
                         )
                         val data = mapOf(Barcode.TYPE_WIFI to wifi)
                         barcodeResultState.value = BarcodeState.Success(data)
@@ -42,6 +44,7 @@ class GoogleCodeScanner(
                         val url = BarcodeTypeModel.Url(
                             title = barcode.url?.title.orEmpty(),
                             url =  barcode.url?.url.orEmpty(),
+                            rawString = barcode.rawValue
                         )
                         val data = mapOf(Barcode.TYPE_URL to url)
                         barcodeResultState.value = BarcodeState.Success(data)

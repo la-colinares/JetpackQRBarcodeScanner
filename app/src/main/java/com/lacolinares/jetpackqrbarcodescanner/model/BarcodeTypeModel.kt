@@ -2,38 +2,32 @@ package com.lacolinares.jetpackqrbarcodescanner.model
 
 fun interface BarcodeTypeModel {
 
-    fun encodeToString(): String
+    fun getRawValue(): String
 
     data class Wifi(
         val networkName: String? = null,
         val password: String? = null,
-        val type: AuthType? = null
+        val type: AuthType? = null,
+        val rawString: String? = null
     ): BarcodeTypeModel{
 
-        enum class AuthType {
-            WEP,
-            WPA,
-            OPEN {
+        enum class AuthType(val value: String) {
+            WEP("WEP"),
+            WPA("WPA"),
+            OPEN("OPEN") {
                 override fun toString(): String {
                     return "No Password"
                 }
             }
         }
-
-        override fun encodeToString(): String = buildString {
-            networkName?.let {
-                append("N:$it;")
-            }
-            password?.let {
-                append("P:$it;")
-            }
-            type?.let {
-                append("T:$it;")
-            }
-        }
+        override fun getRawValue(): String = rawString.orEmpty()
     }
 
-    data class Url(val title: String, val url: String): BarcodeTypeModel{
-        override fun encodeToString(): String = "T:$title;U:$url;"
+    data class Url(
+        val title: String? = null,
+        val url: String? = null,
+        val rawString: String? = null
+    ): BarcodeTypeModel{
+        override fun getRawValue(): String = rawString.orEmpty()
     }
 }
